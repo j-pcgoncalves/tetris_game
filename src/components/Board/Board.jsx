@@ -10,9 +10,9 @@ function Board({ board }) {
 
     return (
         <div className="Board" style={boardStyles}>
-            {board.rows.map((row, y) => 
+            {board.rows.map((row) => 
                 row.map((cell, x) => (
-                    <BoardCell key={x * board.size.columns + y} cell={cell} />
+                    <BoardCell key={x * board.size.columns + x} cell={cell} />
                 ))
             )}
         </div>
