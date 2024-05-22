@@ -32,6 +32,10 @@ export const nextBoard = ({
         shape: tetromino.shape
     });
 
+    if (player.collided || player.isFastDropping) {
+        resetPlayer();
+    }
+
     return {
         rows,
         size: { ...board.size }
