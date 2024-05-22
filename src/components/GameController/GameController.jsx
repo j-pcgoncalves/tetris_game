@@ -3,6 +3,9 @@ import "./GameController.css";
 import { Action, actionForKey } from "../../utils/input";
 import { playerController } from "../../utils/playerController";
 
+import { useInterval } from "../../hooks/useInterval";
+import { useDropTime } from "../../hooks/useDropTime";
+
 function GameController({
     board,
     gameStats,
@@ -10,18 +13,28 @@ function GameController({
     setGameOver,
     setPlayer
 }) {
-    const onKeyUp = ({ code }) => {
-        const action = actionForKey(code);
+    const [dropTime, pauseDropTime, resumeDropTime] = useDropTime({
+        gameStats
+    });
 
-        if (action === Action.Quit) {
-            setGameOver(true);
-        }
-    }
+    useInterval(() => {
+        handleInput({ action: Action.SlowDrop });
+    }, dropTime);
 
     const onKeyDown = ({ code }) => {
         const action = actionForKey(code);
 
-        handleInput({ action });
+        if (action === Action.Pause) {
+            if (dropTime) {
+                pauseDropTime();
+            } else {
+                resumeDropTime();
+            }
+        } else if (action === Action.Quit) {
+            setGameOver(true);
+        } else {
+            handleInput({ action });
+        }
     }
 
     const handleInput = ({ action }) => {
@@ -39,7 +52,6 @@ function GameController({
             className="GameController"
             type="text"
             onKeyDown={onKeyDown}
-            onKeyUp={onKeyUp}
             autoFocus
         />
     );
