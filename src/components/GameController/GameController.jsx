@@ -1,6 +1,6 @@
 import "./GameController.css";
 
-import { Action, actionForKey } from "../../utils/input";
+import { Action, actionForKey, actionIsDrop } from "../../utils/input";
 import { playerController } from "../../utils/playerController";
 
 import { useInterval } from "../../hooks/useInterval";
@@ -21,6 +21,11 @@ function GameController({
         handleInput({ action: Action.SlowDrop });
     }, dropTime);
 
+    const onKeyUp = ({ code }) => {
+        const action = actionForKey(code);
+        if (actionIsDrop(action)) resumeDropTime();
+    }
+
     const onKeyDown = ({ code }) => {
         const action = actionForKey(code);
 
@@ -33,6 +38,8 @@ function GameController({
         } else if (action === Action.Quit) {
             setGameOver(true);
         } else {
+            if (actionIsDrop(action)) pauseDropTime();
+
             handleInput({ action });
         }
     }
@@ -52,6 +59,7 @@ function GameController({
             className="GameController"
             type="text"
             onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
             autoFocus
         />
     );
